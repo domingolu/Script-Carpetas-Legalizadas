@@ -73,12 +73,14 @@
         } else {
           const idHistoria = resultado.idHistoria || 'No disponible';
           const opciones = resultado.opciones || 'No disponible';
+          const urlCarpeta = resultado.urlCarpeta || `No disponible`;
           const valoresStr = JSON.stringify(resultado.valores, null, 2);
 
           output.innerHTML = 
             '<strong>Archivo subido con éxito!</strong><br><br>' +
             '<strong>ID de la hoja (idHistoria):</strong> ' + idHistoria + '<br><br>' +
             '<strong>Opciones recibidas:</strong><br><pre>' + opciones + '</pre><br>' +
+            '<strong>Url carpeta:</strong><br><pre>' + urlCarpeta + '</pre><br>' +
             '<strong>Datos extraídos de la hoja:</strong><br><pre>' + valoresStr + '</pre>';
         }
       }
@@ -108,8 +110,10 @@
       <label><input type="checkbox" name="opciones" value="carga horaria"> Carga horaria</label><br>
       <label><input type="checkbox" name="opciones" value="escala de calificaciones"> Escala de calificaciones</label><br>
       <label><input type="checkbox" name="opciones" value="programas"> Programas</label><br>
-      <label><input type="checkbox" name="opciones" value="sancionado"> Sancionado - por defecto "NO registra ninguna sanción"</label><br>
-      <small><em>La hoja resumen incluye el no sanción. Para egresados no se solicita destino en el resumen.</em></small>
+      <label><input type="checkbox" name="opciones" value="sancionado"> Sancionado - Marcar si es. Por defecto "NO registra ninguna sanción"</label><br>
+      <small><em>La hoja resumen incluye el no sanción.</em></small>
+      <small><em>Para egresados no se solicita destino en el resumen.</em></small>
+      <small><em>Para estudiantes debe ir destino en el resumen.</em></small>
     </fieldset>
     <br>
 

@@ -65,8 +65,8 @@ function moveFileToFolder(fileId, folderId) {
  * @param {string} [idCarpetaPadre] ID opcional de la carpeta donde crear la nueva carpeta
  * @return {Folder} La carpeta creada o existente
  */
-function crearCarpeta(nombre, identificacion, idCarpetaPadre) {
-  const nombreCarpeta = `${nombre} - ${identificacion}`;
+function crearCarpeta(nombre, identificacion, codigoTitulo, idCarpetaPadre) {
+  const nombreCarpeta = `${nombre} - ${identificacion} - ${codigoTitulo}`;
   let carpetaPadre;
 
   if (idCarpetaPadre) {

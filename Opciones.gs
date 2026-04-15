@@ -19,7 +19,7 @@ function procesarOpciones(opciones) {
           archivosEncontrados.forEach(function (archivo) {
             Logger.log("Nombre: " + archivo.nombre + ", ID: " + archivo.id + ", URL: " + archivo.url);
             // Nuevo nombre para el archivo copiado
-            let nuevoNombre = '02-' + archivo.nombre;
+            let nuevoNombre = `03- Plan de estudios ${archivo.nombre}`;
 
             // Buscar si ya existe un archivo con ese nombre en la carpeta destino
             var carpetaDestino = DriveApp.getFolderById(idCarpetaNueva);

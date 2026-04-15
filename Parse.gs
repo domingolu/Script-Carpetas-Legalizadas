@@ -1,6 +1,8 @@
+//Estos son datos sacados del analítico
 var carrera = "";
 var plan = '';
 var titulo = "";
+var codigoTitulo = "";
 var nombre = "";
 var legajo = "";
 var tipoIdentificacion = "";
@@ -12,6 +14,7 @@ var tituloPrevio = '';
 var esEgresado = false;  // Nueva variable para egresado
 var fechaEgreso = '';
 
+//Estos son datos deducidos en función del analítico
 var departamento = '';
 var siglasCarrera = '';
 
@@ -53,25 +56,14 @@ function parse(fileId) {
     const carreraMatch = texto.match(/Carrera\s*:\s*(.+?)\s*-/i);
     carrera = carreraMatch ? carreraMatch[1].trim() : "No encontrado";
     departamento = (obtenerDeptoYCodigoPorNombre(carrera)).depto;
-    //siglasCarrera = (obtenerDeptoYCodigoPorNombre(carrera)).codigo;
-    //Logger.log('siglasCarrera: '+siglasCarrera);
-
-
 
     const planMatch = texto.match(/PLAN\s+(\d+)/i);
     plan = planMatch ? planMatch[1] : "No encontrado";
 
     const tituloMatch = texto.match(/Título\s*:\s*([A-Za-z0-9]+)\s*(.+)/i);
     titulo = tituloMatch ? tituloMatch[2].trim() : "No encontrado"; //el grupo 1 es el código de título, y el grupo 2 es el nombre
+    codigoCarrera = tituloMatch ? tituloMatch[1].trim() : "No encontrado";
 
-    //Cada símbolo especial que quieras aceptar debe ponerse explícitamente dentro del [...], como Ü,', -
-    //para nombre y apellido separados
-    /*
-    const nombreMatch = texto.match(/certifica que ([A-ZÁÉÍÓÚÑÜ'\-\s]+), ([A-ZÁÉÍÓÚÑÜ\s]+)/i);
-    let apellido = nombreMatch ? nombreMatch[1].trim() : "No encontrado";
-    let nombre = nombreMatch ? nombreMatch[2].trim() : "No encontrado";
-    let nombreCompleto = `${apellido}, ${nombre}`;
-    */
     const nombreMatch = texto.match(/certifica que ([A-ZÁÉÍÓÚÑÜ'\-\s]+, [A-ZÁÉÍÓÚÑÜ\s]+)/i);
     nombre = nombreMatch ? nombreMatch[1].trim() : "No encontrado";
 

@@ -4,8 +4,19 @@
  *  drviveapp service instalado
  *  Biblioteca PDFApp instalada id: 1Xmtr5XXEakVql7N6FqwdCNdpdijsJOxgqH173JSB0UOwdb0GJYJbnJLk
  * 
- * web test: https://script.google.com/a/macros/unc.edu.ar/s/AKfycbzRCCViohj3_GessHLhA-DiAb-tFHOix7yF7OISdA8/dev
+ * web test: https://script.google.com/a/macros/artes.unc.edu.ar/s/AKfycbyyWUfJrnu2_j1JrqBEbVXiwMTU4FC23DD93MqY2Vk/dev
  */
+
+/**
+ * Punto de entrada de la Web App.
+ * Esta función se ejecuta ante solicitudes GET.
+ * Retorna el archivo HTML llamado "Index" como interfaz principal.
+ *
+ * Requiere que el proyecto sea implementado como aplicación web.
+ */
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('Index');
+}
 
 /**
  * Función main en backend para procesar archivo y opciones
@@ -38,12 +49,15 @@ function main(fileName, base64Data, opciones) {
     parse(idUploadedFile);
 
     // Crear carpeta con nombre "nombre - identificacion"
-    var carpetaNueva = crearCarpeta(nombre, identificacion, carpetaFuente);
+    var carpetaNueva = crearCarpeta(nombre, identificacion, codigoTitulo, carpetaFuente);
     idCarpetaNueva = carpetaNueva.getId();
+    var urlCarpeta =`https://drive.google.com/drive/folders/${idCarpetaNueva}`;
     Logger.log("Carpeta creada o encontrada: " + carpetaNueva.getName() + " (ID: " + idCarpetaNueva + ")");
+   
 
     //Mover analítico subido a la carpeta de trabajo
     moveFileToFolder(idUploadedFile, idCarpetaNueva);
+    renombrarArchivoPorId(idUploadedFile, `02- Analítico ${nombre} - ${codigoTitulo}` );
 
     //copiar plantillas a la carpeta
     idCaratula = (copiarDocEnCarpeta(idPlantillaCaratula, idCarpetaNueva)).getId();
@@ -71,58 +85,11 @@ function main(fileName, base64Data, opciones) {
     return {
       idHistoria: idHistoria,
       opciones: opcionesTexto,
+      urlCarpeta: urlCarpeta,
       valores:  null
     };
   } catch (e) {
     throw new Error("MAIN: Error en backend: " + e.message);
   }
 }
-
-/**
- * se ejecuta doGet para publicar la WebApp
- */
-
-//-----------------INTERFAZ GRAFICA--------------------
-
-/**
- * Alternativa: Publicar como Web App
- * Si quieres que el HTML se ejecute como una página web independiente, debes crear la función doGet() en tu archivo .gs:
- * Luego, vas a Publicar > Implementar como aplicación web, eliges permisos y usuarios, y obtienes una URL para acceder a tu página web.
- * https://script.google.com/a/macros/unc.edu.ar/s/AKfycbxVMeLx8gmDu67gzNXM9_1u2qmkgPvTxrHSV8sE0nddz_JHkiSStmxyJJN8c39099EZ/exec 
- */
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index');
-}
-
-/**
- * función backend que se ejecuta al pulsar el botón
- */
-function miFuncionBackend() {
-  return "¡Hola, usuario!";
-}
-
-//-------------otras formas de aplicar la interfaz-----------
-
-/**
- * Opcional: Crear un menú para llamar a la interfaz fácilmente
- * Puedes agregar un menú personalizado en Google Sheets para desplegar la interfaz, así:
- * Esto agregará un menú llamado "Mi Menú" con la opción "Abrir Interfaz" para mostrar el HTML
- */
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('Mi Menú')
-    .addItem('Abrir Interfaz', 'showSidebar')
-    .addToUi();
-}
-
-/**
- * interfaz con HTML y luego mostrarla dentro de un diálogo o barra lateral en Google Sheets o Docs
- * Y en el archivo HTML (Page.html)
- */
-function showSidebar() {
-  var html = HtmlService.createHtmlOutputFromFile('Page')
-      .setTitle('Mi interfaz');
-  SpreadsheetApp.getUi().showSidebar(html);
-}
-
 
