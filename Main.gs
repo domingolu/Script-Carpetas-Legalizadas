@@ -51,19 +51,34 @@ function main(fileName, base64Data, opciones) {
     // Crear carpeta con nombre "nombre - identificacion"
     var carpetaNueva = crearCarpeta(nombre, identificacion, codigoTitulo, carpetaFuente);
     idCarpetaNueva = carpetaNueva.getId();
-    var urlCarpeta =`https://drive.google.com/drive/folders/${idCarpetaNueva}`;
+    var urlCarpeta = `https://drive.google.com/drive/folders/${idCarpetaNueva}`;
     Logger.log("Carpeta creada o encontrada: " + carpetaNueva.getName() + " (ID: " + idCarpetaNueva + ")");
-   
+
 
     //Mover analítico subido a la carpeta de trabajo
+    //var nombreAnalitico = `02- Analítico ${nombre} - ${codigoTitulo}`
+    //renombrarArchivoPorId(idUploadedFile, nombreAnalitico);
+    //moveFileToFolder(idUploadedFile, idCarpetaNueva);
+
+    ///////////subo analítico a la carpeta nueva///////////
+    // Mover analítico subido a la carpeta de trabajo
+    var nombreAnalitico = `02- Analítico ${nombre} - ${codigoTitulo}`;
+    // Buscar y eliminar archivos con el mismo nombre en la carpeta nueva
+    var archivosExistentes = carpetaNueva.getFilesByName(nombreAnalitico);
+    while (archivosExistentes.hasNext()) {
+      var archivoExistente = archivosExistentes.next();
+      archivoExistente.setTrashed(true);  // Envía a la papelera
+    }
+    renombrarArchivoPorId(idUploadedFile, nombreAnalitico);
     moveFileToFolder(idUploadedFile, idCarpetaNueva);
-    renombrarArchivoPorId(idUploadedFile, `02- Analítico ${nombre} - ${codigoTitulo}` );
+    //////////////////////7
+
 
     //copiar plantillas a la carpeta
     idCaratula = (copiarDocEnCarpeta(idPlantillaCaratula, idCarpetaNueva)).getId();
-    if (esEgresado){
+    if (esEgresado) {
       idResumenEgresado = (copiarDocEnCarpeta(idPlantillaResumenEgresado, idCarpetaNueva)).getId();
-    } else{
+    } else {
       idResumenAlumno = (copiarDocEnCarpeta(idPlantillaResumenAlumno, idCarpetaNueva)).getId();
     }
     // reemplaza datos parseados del analítico en las plantillas copiadas 
@@ -86,7 +101,7 @@ function main(fileName, base64Data, opciones) {
       idHistoria: idHistoria,
       opciones: opcionesTexto,
       urlCarpeta: urlCarpeta,
-      valores:  null
+      valores: null
     };
   } catch (e) {
     throw new Error("MAIN: Error en backend: " + e.message);

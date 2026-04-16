@@ -122,7 +122,7 @@ function copiarDocEnCarpeta(idArchivoOrigen, idCarpetaDestino) {
     return archivoOrigen.makeCopy(nombreArchivo, carpetaDestino);
 
   } catch (error) {
-    Logger.log('Error al copiar archivo: ' + error.message);
+    Logger.log("Error al copiar archivo: " + error.message);
     return null;
   }
 }
