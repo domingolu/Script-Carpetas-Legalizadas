@@ -62,7 +62,7 @@ function parse(fileId) {
 
     const tituloMatch = texto.match(/Título\s*:\s*([A-Za-z0-9]+)\s*(.+)/i);
     titulo = tituloMatch ? tituloMatch[2].trim() : "No encontrado"; //el grupo 1 es el código de título, y el grupo 2 es el nombre
-    codigoCarrera = tituloMatch ? tituloMatch[1].trim() : "No encontrado";
+    codigoTitulo = tituloMatch ? tituloMatch[1].trim() : "No encontrado";
 
     const nombreMatch = texto.match(/certifica que ([A-ZÁÉÍÓÚÑÜ'\-\s]+, [A-ZÁÉÍÓÚÑÜ\s]+)/i);
     nombre = nombreMatch ? nombreMatch[1].trim() : "No encontrado";

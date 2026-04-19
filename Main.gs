@@ -14,9 +14,24 @@
  *
  * Requiere que el proyecto sea implementado como aplicación web.
  */
+/*
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index');
 }
+*/
+///////////////////////////////
+/**
+ * Esto usa HtmlService.createTemplateFromFile para habilitar scriptlets como <?!= include('JavaScript'); ?>
+ */
+
+function doGet() {
+  return HtmlService.createTemplateFromFile('Index').evaluate();  //usa evaluate para el despliegue
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+////////////////////////////////////////
 
 /**
  * Función main en backend para procesar archivo y opciones
@@ -47,32 +62,30 @@ function main(fileName, base64Data, opciones) {
 
     //parsear
     parse(idUploadedFile);
-
+    Logger.log("PARSEADO"+` codigoTitulo ${codigoTitulo}`);
+    
     // Crear carpeta con nombre "nombre - identificacion"
     var carpetaNueva = crearCarpeta(nombre, identificacion, codigoTitulo, carpetaFuente);
     idCarpetaNueva = carpetaNueva.getId();
     var urlCarpeta = `https://drive.google.com/drive/folders/${idCarpetaNueva}`;
     Logger.log("Carpeta creada o encontrada: " + carpetaNueva.getName() + " (ID: " + idCarpetaNueva + ")");
 
-
-    //Mover analítico subido a la carpeta de trabajo
-    //var nombreAnalitico = `02- Analítico ${nombre} - ${codigoTitulo}`
-    //renombrarArchivoPorId(idUploadedFile, nombreAnalitico);
-    //moveFileToFolder(idUploadedFile, idCarpetaNueva);
-
-    ///////////subo analítico a la carpeta nueva///////////
     // Mover analítico subido a la carpeta de trabajo
-    var nombreAnalitico = `02- Analítico ${nombre} - ${codigoTitulo}`;
-    // Buscar y eliminar archivos con el mismo nombre en la carpeta nueva
-    var archivosExistentes = carpetaNueva.getFilesByName(nombreAnalitico);
-    while (archivosExistentes.hasNext()) {
-      var archivoExistente = archivosExistentes.next();
-      archivoExistente.setTrashed(true);  // Envía a la papelera
-    }
-    renombrarArchivoPorId(idUploadedFile, nombreAnalitico);
     moveFileToFolder(idUploadedFile, idCarpetaNueva);
-    //////////////////////7
+    Logger.log("analítico movido");
 
+    // Nombre final del archivo
+    const nuevoNombre = `02- Analítico ${nombre} - ${codigoTitulo}`;
+
+    const archivosConMismoNombre = carpetaNueva.getFilesByName(nuevoNombre);
+    while (archivosConMismoNombre.hasNext()) {
+      const archivoExistente = archivosConMismoNombre.next();
+      archivoExistente.setTrashed(true);
+    }
+
+    // Renombrar el archivo nuevo
+    renombrarArchivoPorId(idUploadedFile, nuevoNombre);
+    Logger.log(`main: Archivo movido a la carpeta ${idCarpetaNueva} con nombre ${nuevoNombre}.`);
 
     //copiar plantillas a la carpeta
     idCaratula = (copiarDocEnCarpeta(idPlantillaCaratula, idCarpetaNueva)).getId();
