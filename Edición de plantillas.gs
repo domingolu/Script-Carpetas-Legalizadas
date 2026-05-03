@@ -48,8 +48,6 @@ function editarPlantillas() {
   reemplazarTextoEnDocumento(idCaratula, '{{RM}}', resolucionMinisterial);
 
   //editar resumen
-
-
   if (esEgresado) {
     reemplazarTextoEnDocumento(idResumenEgresado, '{{NOMBRE}}', nombre);
     reemplazarTextoEnDocumento(idResumenEgresado, '{{IDENTIFICACION}}', identificacion);

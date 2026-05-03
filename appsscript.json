@@ -1,20 +1,24 @@
 {
   "timeZone": "America/Argentina/Buenos_Aires",
   "dependencies": {
-    "enabledAdvancedServices": [{
-      "userSymbol": "Drive",
-      "serviceId": "drive",
-      "version": "v3"
-    }],
-    "libraries": [{
-      "userSymbol": "PDFApp",
-      "libraryId": "1Xmtr5XXEakVql7N6FqwdCNdpdijsJOxgqH173JSB0UOwdb0GJYJbnJLk",
-      "version": "8"
-    }]
+    "enabledAdvancedServices": [
+      {
+        "userSymbol": "Drive",
+        "serviceId": "drive",
+        "version": "v3"
+      }
+    ],
+    "libraries": [
+      {
+        "userSymbol": "PDFApp",
+        "libraryId": "1Xmtr5XXEakVql7N6FqwdCNdpdijsJOxgqH173JSB0UOwdb0GJYJbnJLk",
+        "version": "8"
+      }
+    ]
   },
   "webapp": {
-    "access": "MYSELF",
-    "executeAs": "USER_DEPLOYING"
+    "executeAs": "USER_DEPLOYING",
+    "access": "MYSELF"
   },
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8"

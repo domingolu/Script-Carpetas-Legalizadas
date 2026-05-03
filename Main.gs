@@ -4,8 +4,34 @@
  *  drviveapp service instalado
  *  Biblioteca PDFApp instalada id: 1Xmtr5XXEakVql7N6FqwdCNdpdijsJOxgqH173JSB0UOwdb0GJYJbnJLk
  * 
- * web test: https://script.google.com/a/macros/unc.edu.ar/s/AKfycbzRCCViohj3_GessHLhA-DiAb-tFHOix7yF7OISdA8/dev
+ * web test: https://script.google.com/a/macros/artes.unc.edu.ar/s/AKfycbyyWUfJrnu2_j1JrqBEbVXiwMTU4FC23DD93MqY2Vk/dev
  */
+
+/**
+ * Punto de entrada de la Web App.
+ * Esta función se ejecuta ante solicitudes GET.
+ * Retorna el archivo HTML llamado "Index" como interfaz principal.
+ *
+ * Requiere que el proyecto sea implementado como aplicación web.
+ */
+/*
+function doGet() {
+  return HtmlService.createHtmlOutputFromFile('Index');
+}
+*/
+///////////////////////////////
+/**
+ * Esto usa HtmlService.createTemplateFromFile para habilitar scriptlets como <?!= include('JavaScript'); ?>
+ */
+
+function doGet() {
+  return HtmlService.createTemplateFromFile('Index').evaluate();  //usa evaluate para el despliegue
+}
+
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+////////////////////////////////////////
 
 /**
  * Función main en backend para procesar archivo y opciones
@@ -36,20 +62,36 @@ function main(fileName, base64Data, opciones) {
 
     //parsear
     parse(idUploadedFile);
-
+    Logger.log("PARSEADO"+` codigoTitulo ${codigoTitulo}`);
+    
     // Crear carpeta con nombre "nombre - identificacion"
-    var carpetaNueva = crearCarpeta(nombre, identificacion, carpetaFuente);
+    var carpetaNueva = crearCarpeta(nombre, identificacion, codigoTitulo, carpetaFuente);
     idCarpetaNueva = carpetaNueva.getId();
+    var urlCarpeta = `https://drive.google.com/drive/folders/${idCarpetaNueva}`;
     Logger.log("Carpeta creada o encontrada: " + carpetaNueva.getName() + " (ID: " + idCarpetaNueva + ")");
 
-    //Mover analítico subido a la carpeta de trabajo
+    // Mover analítico subido a la carpeta de trabajo
     moveFileToFolder(idUploadedFile, idCarpetaNueva);
+    Logger.log("analítico movido");
+
+    // Nombre final del archivo
+    const nuevoNombre = `02- Analítico ${nombre} - ${codigoTitulo}`;
+
+    const archivosConMismoNombre = carpetaNueva.getFilesByName(nuevoNombre);
+    while (archivosConMismoNombre.hasNext()) {
+      const archivoExistente = archivosConMismoNombre.next();
+      archivoExistente.setTrashed(true);
+    }
+
+    // Renombrar el archivo nuevo
+    renombrarArchivoPorId(idUploadedFile, nuevoNombre);
+    Logger.log(`main: Archivo movido a la carpeta ${idCarpetaNueva} con nombre ${nuevoNombre}.`);
 
     //copiar plantillas a la carpeta
     idCaratula = (copiarDocEnCarpeta(idPlantillaCaratula, idCarpetaNueva)).getId();
-    if (esEgresado){
+    if (esEgresado) {
       idResumenEgresado = (copiarDocEnCarpeta(idPlantillaResumenEgresado, idCarpetaNueva)).getId();
-    } else{
+    } else {
       idResumenAlumno = (copiarDocEnCarpeta(idPlantillaResumenAlumno, idCarpetaNueva)).getId();
     }
     // reemplaza datos parseados del analítico en las plantillas copiadas 
@@ -71,58 +113,11 @@ function main(fileName, base64Data, opciones) {
     return {
       idHistoria: idHistoria,
       opciones: opcionesTexto,
-      valores:  null
+      urlCarpeta: urlCarpeta,
+      valores: null
     };
   } catch (e) {
     throw new Error("MAIN: Error en backend: " + e.message);
   }
 }
-
-/**
- * se ejecuta doGet para publicar la WebApp
- */
-
-//-----------------INTERFAZ GRAFICA--------------------
-
-/**
- * Alternativa: Publicar como Web App
- * Si quieres que el HTML se ejecute como una página web independiente, debes crear la función doGet() en tu archivo .gs:
- * Luego, vas a Publicar > Implementar como aplicación web, eliges permisos y usuarios, y obtienes una URL para acceder a tu página web.
- * https://script.google.com/a/macros/unc.edu.ar/s/AKfycbxVMeLx8gmDu67gzNXM9_1u2qmkgPvTxrHSV8sE0nddz_JHkiSStmxyJJN8c39099EZ/exec 
- */
-function doGet() {
-  return HtmlService.createHtmlOutputFromFile('Index');
-}
-
-/**
- * función backend que se ejecuta al pulsar el botón
- */
-function miFuncionBackend() {
-  return "¡Hola, usuario!";
-}
-
-//-------------otras formas de aplicar la interfaz-----------
-
-/**
- * Opcional: Crear un menú para llamar a la interfaz fácilmente
- * Puedes agregar un menú personalizado en Google Sheets para desplegar la interfaz, así:
- * Esto agregará un menú llamado "Mi Menú" con la opción "Abrir Interfaz" para mostrar el HTML
- */
-function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('Mi Menú')
-    .addItem('Abrir Interfaz', 'showSidebar')
-    .addToUi();
-}
-
-/**
- * interfaz con HTML y luego mostrarla dentro de un diálogo o barra lateral en Google Sheets o Docs
- * Y en el archivo HTML (Page.html)
- */
-function showSidebar() {
-  var html = HtmlService.createHtmlOutputFromFile('Page')
-      .setTitle('Mi interfaz');
-  SpreadsheetApp.getUi().showSidebar(html);
-}
-
 

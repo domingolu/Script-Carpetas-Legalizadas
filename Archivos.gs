@@ -31,33 +31,31 @@ function subirFileToDrive(fileName, base64Data) {
  * Si ya existe un archivo con el mismo nombre en la carpeta destino, lo reemplaza
  * @param {string} fileId ID del archivo a mover
  * @param {string} folderId ID de la carpeta destino
+ * @return {string|null} ID del archivo movido, o null si hubo error
  */
 function moveFileToFolder(fileId, folderId) {
   try {
-    // Obtener el archivo por su ID
     const file = DriveApp.getFileById(fileId);
-    // Obtener la carpeta destino por ID
     const folder = DriveApp.getFolderById(folderId);
-    
-    // Buscar archivos con el mismo nombre en la carpeta destino
+
     const filesIterator = folder.getFilesByName(file.getName());
     while (filesIterator.hasNext()) {
       const existingFile = filesIterator.next();
-      // Eliminar archivo existente
       existingFile.setTrashed(true);
     }
-    
-    // Mover el archivo a la carpeta destino
+
     file.moveTo(folder);
-    
     Logger.log(`Archivo con ID ${fileId} movido a carpeta con ID ${folderId}, reemplazando si existía.`);
+    return file.getId();
+    //return fileId;
   } catch (error) {
     Logger.log('Error al mover el archivo: ' + error.message);
+    return null;
   }
 }
 
 /**
- * Crea una carpeta con el nombre "nombre - identificacion" dentro de la carpeta indicada por ID.
+ * Crea una carpeta con el nombre "nombre - identificacion - codigoTitulo" dentro de la carpeta indicada por ID.
  * Si ya existe una carpeta con ese nombre en dicha ubicación, devuelve la carpeta existente.
  *
  * @param {string} nombre Nombre extraído del documento
@@ -65,8 +63,8 @@ function moveFileToFolder(fileId, folderId) {
  * @param {string} [idCarpetaPadre] ID opcional de la carpeta donde crear la nueva carpeta
  * @return {Folder} La carpeta creada o existente
  */
-function crearCarpeta(nombre, identificacion, idCarpetaPadre) {
-  const nombreCarpeta = `${nombre} - ${identificacion}`;
+function crearCarpeta(nombre, identificacion, codigoTitulo, idCarpetaPadre) {
+  const nombreCarpeta = `${nombre} - ${identificacion} - ${codigoTitulo}`;
   let carpetaPadre;
 
   if (idCarpetaPadre) {
@@ -122,7 +120,7 @@ function copiarDocEnCarpeta(idArchivoOrigen, idCarpetaDestino) {
     return archivoOrigen.makeCopy(nombreArchivo, carpetaDestino);
 
   } catch (error) {
-    Logger.log('Error al copiar archivo: ' + error.message);
+    Logger.log("Error al copiar archivo: " + error.message);
     return null;
   }
 }
