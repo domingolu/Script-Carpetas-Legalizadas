@@ -96,7 +96,7 @@ function generarMapaCodigoAnio() {
   return mapa;
 }
 
-
+//////////////////////////////////////////////////////////////////
 /**
  * Busca y copia archivos cuyo nombre contenga simultáneamente un código y un año,
  * agregando al comienzo del nombre copiado un número de conteo que empieza en 05.
@@ -106,12 +106,13 @@ function generarMapaCodigoAnio() {
  * @param {string} idCarpetaOrigen - ID de la carpeta origen en Google Drive.
  * @param {string} idCarpetaDestino - ID de la carpeta destino en Google Drive.
  */
+/**
 function copiarArchivosPorCodigoYAnio(codigo, anio, idCarpetaOrigen, idCarpetaDestino) {
   var carpetaOrigen = DriveApp.getFolderById(idCarpetaOrigen);
   var carpetaDestino = DriveApp.getFolderById(idCarpetaDestino);
 
   // Contador que se mantiene para toda la recursión
-  var countCopiados = 5; // empieza en 05
+  var countCopiados = 10; // empieza en 05
 
   // Función recursiva para buscar y copiar archivos en carpeta y subcarpetas
   function buscarYCopiarEnCarpeta(carpeta) {
@@ -145,53 +146,48 @@ function copiarArchivosPorCodigoYAnio(codigo, anio, idCarpetaOrigen, idCarpetaDe
 
   Logger.log('Total archivos copiados: ' + (countCopiados - 5));
 }
-
-
-////////////////////funcion original sin número de prefijo///////////////////////////////////////7
-
-/****
-    Función copiarArchivosPorCodigoYAnio
-    Esta función realiza una búsqueda recursiva en una carpeta de Google Drive y todas sus subcarpetas,
-    copiando a la carpeta destino todos los archivos cuyo nombre contenga simultáneamente un código y un año especificados.
-    Parámetros:
-    @param {string} codigo - Código que debe estar presente en el nombre de los archivos a copiar.
-    @param {string} anio - Año que debe estar presente en el nombre de los archivos a copiar.
-    @param {string} idCarpetaOrigen - ID de la carpeta origen en Google Drive donde se realizará la búsqueda.
-    @param {string} idCarpetaDestino - ID de la carpeta destino en Google Drive donde se copiarán los archivos encontrados.
-    Funcionamiento:
-        Obtiene las referencias a las carpetas origen y destino a partir de sus IDs.
-        Define una función recursiva 'buscarYCopiarEnCarpeta' que:
-        Busca todos los archivos en la carpeta actual.
-        Para cada archivo, verifica si su nombre contiene simultáneamente el código y el año buscados.
-    text
-     En caso afirmativo, realiza una copia del archivo en la carpeta destino.
-        Luego, obtiene todas las subcarpetas de la carpeta actual y llama recursivamente a la función sobre cada una.
-        Inicia el proceso recursivo desde la carpeta origen.
-        Al finalizar, registra en el log la cantidad total de archivos copiados.
-    Uso típico:
-    copiarArchivosPorCodigoYAnio("ABC123", "2024", "id_carpeta_origen", "id_carpeta_destino");
-*//**
+*/
+//--------------------función que solo toma PDF y no otro formato----------------
+/**
+ * Busca y copia archivos PDF cuyo nombre contenga simultáneamente un código y un año,
+ * agregando al comienzo del nombre copiado un número de conteo que empieza en 10.
+ *
+ * @param {string} codigo - Código que debe aparecer en el nombre del archivo.
+ * @param {string} anio - Año que debe aparecer en el nombre del archivo.
+ * @param {string} idCarpetaOrigen - ID de la carpeta origen en Google Drive.
+ * @param {string} idCarpetaDestino - ID de la carpeta destino en Google Drive.
+ */
 function copiarArchivosPorCodigoYAnio(codigo, anio, idCarpetaOrigen, idCarpetaDestino) {
   var carpetaOrigen = DriveApp.getFolderById(idCarpetaOrigen);
   var carpetaDestino = DriveApp.getFolderById(idCarpetaDestino);
-  var countCopiados = 0;
 
+  // Contador que se mantiene para toda la recursión
+  var countCopiados = 10; // empieza en 10 (no 05)
 
   // Función recursiva para buscar y copiar archivos en carpeta y subcarpetas
   function buscarYCopiarEnCarpeta(carpeta) {
-    // Buscar archivos en la carpeta actual
     var archivos = carpeta.getFiles();
     while (archivos.hasNext()) {
       var archivo = archivos.next();
       var nombreArchivo = archivo.getName();
+
+      // Solo procesar archivos cuyo nombre termina en .pdf (cualquier caso)
+      if (!/\.pdf$/i.test(nombreArchivo)) continue;
+
+      // Verificar que contenga código y año
       if (nombreArchivo.indexOf(codigo) !== -1 && nombreArchivo.indexOf(anio) !== -1) {
-        archivo.makeCopy(nombreArchivo, carpetaDestino);
-        countCopiados++;
+        // Generar prefijo tipo "10", "11", etc.
+        var numeroPrefijo = ("0" + countCopiados).slice(-2);
+        var nuevoNombre = numeroPrefijo + "-" + nombreArchivo;
+
+        var archivoCopiado = archivo.makeCopy(nombreArchivo, carpetaDestino);
+        archivoCopiado.setName(nuevoNombre);
+
+        countCopiados++; // Aumenta solo cuando se copia un archivo
       }
     }
 
-
-    // Buscar subcarpetas y llamar recursivamente
+    // Recorrer subcarpetas
     var subCarpetas = carpeta.getFolders();
     while (subCarpetas.hasNext()) {
       var subCarpeta = subCarpetas.next();
@@ -199,12 +195,8 @@ function copiarArchivosPorCodigoYAnio(codigo, anio, idCarpetaOrigen, idCarpetaDe
     }
   }
 
-
-  // Inicio de la búsqueda recursiva
+  // Iniciar la búsqueda recursiva
   buscarYCopiarEnCarpeta(carpetaOrigen);
 
-
-  Logger.log('Archivos copiados: ' + countCopiados);
+  Logger.log('Total archivos copiados: ' + (countCopiados - 10));
 }
-
-*/

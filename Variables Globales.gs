@@ -8,7 +8,7 @@ var idPlantillaCaratula = '1I-r11kTgUckZfUwU0P5C4gzJopqpvWREUk9s6L5h2I0';
 var idPlantillaCargaHoraria = '1rqFe0eabkQRbqqGEOuyrmKsp4tCiR9B2l0OX5wE-WDA';
 var idPlantillaEscala = '1xO7HcaxrfXtoKKeeios-vkwr9ZpNLUjqYet6MDmqOg4';
 var idPlantillaResumenAlumno = '1bv6LNtOkcw7_NqJjJZR0Z5BA4XWAFu2JYRAhC8k7KFI';
-var idPlantillaResumenEgresado = '1vp1_7Ne8q75eJmZy1ELpZ27Zrp7VZQIdvot2VXFSMKM';
+var idPlantillaResumenEgresado = '1KTzpFzg1Svlk4PkT-K2cdnXCvGMXyREqLhSy4vfcORE';
 
 //  ARCHIVOS DE TRABAJO
 var idCaratula = '';      //carátula a confeccionar
